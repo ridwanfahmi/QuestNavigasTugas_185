@@ -12,6 +12,9 @@
     <string name="daftar">Daftar Peserta</string>
     <string name="form_pend">Formulir Pendaftaran</string>
     <string name="welcome">Selamat Datang Imoett</string>
+    <string name="formulir">Formulir Pendaftaran</string>
+    <string name="kosong">Belum ada yang daftar</string>
+    <string name="kembali">Kembali</string>
 
 
 

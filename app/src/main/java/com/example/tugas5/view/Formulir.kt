@@ -1,95 +1,259 @@
 package com.example.tugas5.view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tugas5.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun HalamanTampilData(
-    peserta: Peserta,
-    onBackBtnClick: () -> Unit,
-){
-    val blueTheme = Color(0xFF673AB7)
+fun HalamanFormulir(
+    onSimpan: (String, String, String, String) -> Unit,
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
 
-    val items = listOf(
-        Pair(stringResource(id = R.string.nama_lengkap), "Fahmi"),
-        Pair(stringResource(id = R.string.jenis_kelamin), "Lelaki"),
-        Pair(stringResource(id = R.string.status_kawin), "Duda anak 2"),
-        Pair(stringResource(id = R.string.alamat), "Dubai")
-    )
+    var namaLengkap by remember { mutableStateOf("") }
+    var jenisKelamin by remember { mutableStateOf("") }
+    var statusPerkawinan by remember { mutableStateOf("") }
+    var alamat by remember { mutableStateOf("") }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(id = R.string.form_pend), color = Color.White) },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = blueTheme
+    var showPopup by remember { mutableStateOf(false) }
+
+    val jenisKelaminOptions = listOf("Laki-laki", "Perempuan")
+    val statusPerkawinanOptions = listOf("Janda", "Lajang", "Duda")
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF3E5F5))
+    ) {
+        // Header
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(Color(0xFF30FFDF))
+                .padding(horizontal = 24.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack, modifier = Modifier.size(40.dp)) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
+                        contentDescription = "Kembali",
+                        tint = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.formulir),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
-            )
+            }
         }
-    ) { isiRuang ->
-        Column(
-            modifier = Modifier.padding(isiRuang),
-            verticalArrangement = Arrangement.SpaceBetween
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Form Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                items.forEach { item ->
-                    Column {
-                        Text(
-                            text = item.first.uppercase(),
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                        Text(
-                            text = item.second,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.SansSerif,
-                            fontSize = 20.sp
-                        )
+                // Nama
+                Column {
+                    Text(
+                        text = stringResource(R.string.nama_lengkap),
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = namaLengkap,
+                        onValueChange = { namaLengkap = it },
+                        placeholder = { Text(stringResource(R.string.nama_lengkap)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color(0xFF00F2FF),
+                            focusedBorderColor = Color(0xFF0019FF)
+                        ),
+                        singleLine = true
+                    )
+                }
+
+                // Jenis Kelamin
+                Column {
+                    Text(
+                        text = stringResource(R.string.jenis_kelamin),
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    jenisKelaminOptions.forEach { option ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = jenisKelamin == option,
+                                    onClick = { jenisKelamin = option }
+                                )
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = jenisKelamin == option,
+                                onClick = { jenisKelamin = option },
+                                colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0018DE))
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = option, fontSize = 16.sp)
+                        }
                     }
-                    HorizontalDivider(thickness = 1.dp, color = blueTheme.copy(alpha = 0.5f))
+                }
+
+                // Status Perkawinan
+                Column {
+                    Text(
+                        text = stringResource(R.string.status_kawin),
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    statusPerkawinanOptions.forEach { option ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = statusPerkawinan == option,
+                                    onClick = { statusPerkawinan = option }
+                                )
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = statusPerkawinan == option,
+                                onClick = { statusPerkawinan = option },
+                                colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0031CC))
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = option, fontSize = 16.sp)
+                        }
+                    }
+                }
+
+                // Alamat
+                Column {
+                    Text(
+                        text = "ALAMAT",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = alamat,
+                        onValueChange = { alamat = it },
+                        placeholder = { Text("Alamat") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color(0xFF2EFFE3),
+                            focusedBorderColor = Color(0xFF002BFF)
+                        ),
+                        singleLine = true
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Tombol Submit
+                Button(
+                    onClick = {
+                        if (namaLengkap.isEmpty() || jenisKelamin.isEmpty() ||
+                            statusPerkawinan.isEmpty() || alamat.isEmpty()
+                        ) {
+                            Toast.makeText(context, "Semua field wajib diisi", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            onSimpan(namaLengkap, jenisKelamin, statusPerkawinan, alamat)
+                            showPopup = true
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF000CFF))
+                ) {
+                    Text(
+                        text = "Submit",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(56.dp),
-                onClick = onBackBtnClick,
-                colors = ButtonDefaults.buttonColors(containerColor = blueTheme)
-            ) {
-                Text(text = "KEMBALI KE DAFTAR", fontSize = 18.sp)
-            }
+        // Popup Alert
+        if (showPopup) {
+            AlertDialog(
+                onDismissRequest = { /* Tidak bisa ditutup dengan klik luar */ },
+                title = {
+                    Text(
+                        text = "Pendaftaran Berhasil!",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF0003F6)
+                    )
+                },
+                text = {
+                    Text(
+                        text = """
+                            Nama: $namaLengkap
+                            Jenis Kelamin: $jenisKelamin
+                            Status: $statusPerkawinan
+                            Alamat: $alamat
+                        """.trimIndent(),
+                        fontSize = 16.sp
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = { showPopup = false }) {
+                        Text("OK", color = Color(0xFF002DFD))
+                    }
+                },
+                containerColor = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            )
         }
     }
 }
