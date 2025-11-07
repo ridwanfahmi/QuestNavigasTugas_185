@@ -3,9 +3,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,14 +34,14 @@ fun HalamanAwal(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Spacer(modifier = Modifier.height(60.dp))
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Text(
                 stringResource(id = R.string.welcome),
                 fontSize = 28.sp,
@@ -65,6 +69,21 @@ fun HalamanAwal(
                 color = Color.Gray
             )
 
+        }
+        Button(
+            onClick = onMasukClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .height(56.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = blueTheme),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(
+                text = stringResource(id = R.string.masuk),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
