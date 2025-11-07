@@ -9,6 +9,7 @@
     <string name="jenis_kelamin">JENIS KELAMIN</string>
     <string name="alamat">ALAMAT</string>
     <string name="status_kawin">STATUS KAWIN</string>
+    <string name="daftar">Daftar Peserta</string>
 
 
 </resources>
